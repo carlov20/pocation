@@ -1,0 +1,5 @@
+---
+applications:
+- name: pocation
+  buildpack: java_buildpack
+  path: build/libs/pocation-1.0.jar

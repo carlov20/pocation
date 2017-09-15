@@ -10,7 +10,7 @@ public class HomeController {
 
     private String googleMapApiKey;
 
-    public HomeController( @Value("${google.map.api.key}") String googleMapApiKey) {
+    public HomeController(@Value("${google.map.api.key:someKey}") String googleMapApiKey) {
         this.googleMapApiKey = googleMapApiKey;
     }
 
