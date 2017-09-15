@@ -34,9 +34,25 @@
                     };
 
                     infoWindow.setPosition(currentPosition);
-                    infoWindow.setContent('Location found.');
+                    infoWindow.setContent('Location found. Loading address');
                     infoWindow.open(map);
                     map.setCenter(currentPosition);
+
+                    var geocoder = new google.maps.Geocoder();
+
+                    geocoder.geocode({'location': currentPosition}, function (results, status) {
+                        if (status === 'OK') {
+                            if (results[0]) {
+                                infoWindow.setContent(results[0].formatted_address);
+//                               infoWindow.open(map);
+                            } else {
+                                infoWindow.content('No address found');
+                            }
+                        } else {
+                            infoWindow.content('Looks like address lookup isn\'t working. please try again tomorow.');
+                        }
+                    });
+
                 }, function() {
                     handleLocationError(true, infoWindow, map.getCenter());
                 });
