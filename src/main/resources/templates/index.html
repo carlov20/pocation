@@ -13,6 +13,16 @@
             height: 100%;
             width:100%;
         }
+
+        #infoMsg {
+            font-size: 20px;
+        }
+
+        @media only screen and (max-device-width: 600px) {
+            #infoMsg {
+                font-size: 30px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -34,7 +44,7 @@
                     };
 
                     infoWindow.setPosition(currentPosition);
-                    infoWindow.setContent('Location found. Loading address');
+                    infoWindow.setContent(createInfoContent('Location found. Loading address'));
                     infoWindow.open(map);
                     map.setCenter(currentPosition);
 
@@ -43,18 +53,22 @@
                     geocoder.geocode({'location': currentPosition}, function (results, status) {
                         if (status === 'OK') {
                             if (results[0]) {
-                                infoWindow.setContent(results[0].formatted_address);
+                                infoWindow.setContent(createInfoContent(results[0].formatted_address));
 //                               infoWindow.open(map);
                             } else {
-                                infoWindow.content('No address found');
+                                infoWindow.content(createInfoContent('No address found'));
                             }
                         } else {
-                            infoWindow.content('Looks like address lookup isn\'t working. please try again tomorow.');
+                            infoWindow.content(createInfoContent('Looks like address lookup isn\'t working. please try again tomorrow.'));
                         }
                     });
 
                 }, function() {
                     handleLocationError(true, infoWindow, map.getCenter());
+                }, {
+                    enableHighAccuracy: false,
+                    timeout: 10000,
+                    maximumAge: 10000
                 });
             } else {
                 handleLocationError(false, infoWindow, map.getCenter());
@@ -68,8 +82,12 @@
 
         function handleLocationError(browserHasGeolocation, infoWindow, position) {
             infoWindow.setPosition(position);
-            infoWindow.setContent(browserHasGeolocation ? 'Error: The Geolocation service failed' : 'Looks like your browser doesn\'t support geolocation');
+            infoWindow.setContent(createInfoContent(browserHasGeolocation ? 'Cannot get your location. Please check location settings' : 'Looks like your browser doesn\'t support geolocation'));
             infoWindow.open(map);
+        }
+
+        function createInfoContent(message) {
+            return '<p id="infoMsg">' + message + '</p>';
         }
     </script>
 <script async="async" defer="defer" th:src="@{https://maps.googleapis.com/maps/api/js(key=${googleApiKey},callback='initMap')}"/>
